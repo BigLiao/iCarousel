@@ -5,11 +5,6 @@
 
 (function ($) {
 
-if (!$) {
-    console.error('需要引入JQuery');
-    return;
-}
-
 //定义轮播图组件的构造函数
 function Carousel(el, option) {
     //目标元素
