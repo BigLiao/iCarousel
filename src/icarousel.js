@@ -32,7 +32,8 @@ Icarousel.prototype.init = function (option) {
             'https://static.bootcss.com/www/assets/img/gulpjs.png?1502824502911',
             'https://static.bootcss.com/www/assets/img/webpack.png?1502824502911',
             'https://static.bootcss.com/www/assets/img/lesscss.png?1502824502911'
-        ]
+        ],
+        links: []
     };
     this.options = $.extend({}, DEFAULT, option);
 
@@ -52,10 +53,11 @@ Icarousel.prototype.init = function (option) {
 
     function addImage (src) {
         var $img = $('<img>');
-        $img.attr('src', src);
-        $img.addClass('icarousel-img');
+        $img.attr('src', src).addClass('icarousel-img');
+        var $a = $('<a></a>');
+        $a.append($img);
         var $li = $('<li></li>');
-        $li.addClass('icarousel-item').append($img);
+        $li.addClass('icarousel-item').append($a);
         $ul.append($li);
     }
 
@@ -114,7 +116,7 @@ Icarousel.prototype.prev = function () {
     if (this.isPlaying) {
         return;
     }
-    if (this.currentNum === 0) {
+    if (this.currentNum <= 0) {
         this.currentNum = this.itemLength;
         this.box.css('left', -1 * this.itemLength * this.itemWidth);
     }
@@ -130,7 +132,7 @@ Icarousel.prototype.slideTo = function (i, callback) {
     var left = -i * this.itemWidth;
     var self = this;
     this.box.stop(true, true).animate({left: left}, this.options.speed, 'linear', function () {
-        if (i === self.itemLength) {
+        if (i >= self.itemLength) {
             self.currentNum = 0;
             self.box.css('left', 0);
         }
