@@ -93,10 +93,10 @@ Icarousel.prototype.init = function (option) {
 
     //鼠标移入时停止
     if (this.options.hoverStop) {
-        this.el.on('mousemove', function () {
+        this.el.bind('mousemove', function () {
             self.pause.apply(self);
         });
-        this.el.on('mouseleave', function () {
+        this.el.bind('mouseleave', function () {
             self.start.apply(self);
         });
     }
