@@ -1,6 +1,6 @@
 /**
  * 轮播图插件
- * 要先引入jQuery 1.x 版本
+ * 要先引入jQuery 1.12 版本
  * */
 
 ;(function ($) {
@@ -24,6 +24,7 @@ Icarousel.prototype.init = function (option) {
     var self = this;
     var DEFAULT = {
         autoPlay: true,
+        hoverStop: true,
         duration: 2000,
         speed: 600,
         images: [
@@ -97,12 +98,16 @@ Icarousel.prototype.init = function (option) {
         self.prev();
     });
 
-    //鼠标移入事件
-    this.el.hover(function () {
-        self.pause.apply(self);
-    }, function () {
-        self.start.apply(self);
-    });
+    //鼠标移入时停止
+    if (this.options.hoverStop) {
+        this.el.on('mousemove', function () {
+            self.pause.apply(self);
+        });
+        this.el.on('mouseleave', function () {
+            self.start.apply(self);
+        });
+    }
+
 
     //自动播放
     if (this.options.autoPlay) {
@@ -113,6 +118,7 @@ Icarousel.prototype.init = function (option) {
 //开始
 Icarousel.prototype.start = function () {
     var self = this;
+    clearTimeout(this.timmer);
     (function cycle () {
         self.timmer = setTimeout(function () {
             self.currentNum++;
@@ -126,14 +132,19 @@ Icarousel.prototype.pause = function () {
 };
 //播放下一张
 Icarousel.prototype.next = function () {
+    var self = this;
     if (this.isPlaying) {
         return;
     }
+    this.pause();
     this.currentNum++;
-    this.slideTo(this.currentNum);
+    this.slideTo(this.currentNum, function () {
+        self.start.apply(self);
+    });
 };
 //播放上一张
 Icarousel.prototype.prev = function () {
+    var self = this;
     if (this.isPlaying) {
         return;
     }
@@ -141,8 +152,11 @@ Icarousel.prototype.prev = function () {
         this.currentNum = this.itemLength;
         this.box.css('left', -1 * this.itemLength * this.itemWidth);
     }
+    this.pause();
     this.currentNum--;
-    this.slideTo(this.currentNum);
+    this.slideTo(this.currentNum, function () {
+        self.start.apply(self);
+    });
 };
 //滑动播放
 Icarousel.prototype.slideTo = function (i, callback) {

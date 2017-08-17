@@ -8,28 +8,40 @@
     <title>Carouse Demo</title>
     <link rel="stylesheet" href="../src/icarousel.css">
     <style>
-        #carousel {
-            width: 200px;
-            height: 100px;
-            margin: 20px auto;
-        }
         .icarousel {
-            width: 800px;
+            width: 500px;
             height: 300px;
+            margin: 20px auto;
         }
     </style>
 </head>
 <body>
-<div id="carousel"></div>
 <div class="icarousel"></div>
+<div>
+    <button class="start">开始</button>
+    <button class="stop">停止</button>
+    <button class="next">下一张</button>
+    <button class="prev">上一张</button>
+</div>
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
         crossorigin="anonymous"></script>
 <script src="../src/icarousel.js"></script>
 <script>
-    var carousel = $('#carousel').icarousel({});
-    $('.icarousel').icarousel({width: '20%'});
+    var carousel = $('.icarousel').icarousel({width: '20%'});
+    $('.start').click(function () {
+        carousel.icarousel('start');
+    });
+    $('.stop').click(function () {
+        carousel.icarousel('pause');
+    });
+    $('.next').click(function () {
+        carousel.icarousel('next');
+    });
+    $('.prev').click(function () {
+        carousel.icarousel('prev');
+    });
 </script>
 </body>
 </html>
