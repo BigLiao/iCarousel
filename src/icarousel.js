@@ -23,17 +23,17 @@ Icarousel.prototype.init = function (option) {
 
     var self = this;
     var DEFAULT = {
-        height: '100%',
-        width: '100%',
         autoPlay: true,
         duration: 2000,
         speed: 600,
         images: [
             'https://static.bootcss.com/www/assets/img/gulpjs.png?1502824502911',
-            'https://static.bootcss.com/www/assets/img/webpack.png?1502824502911',
+            {
+                src: 'https://static.bootcss.com/www/assets/img/webpack.png?1502824502911',
+                href: 'https://webpack.github.io/'
+            },
             'https://static.bootcss.com/www/assets/img/lesscss.png?1502824502911'
-        ],
-        links: []
+        ]
     };
     this.options = $.extend({}, DEFAULT, option);
 
@@ -51,22 +51,43 @@ Icarousel.prototype.init = function (option) {
     //末尾重复第一张图片
     addImage(this.options.images[0]);
 
-    function addImage (src) {
+    function addImage (item) {
+        var src,href;
+        if (typeof item === 'string') {
+            src = item;
+            href = '';
+        } else if (typeof item === 'object') {
+            if ('src' in item) {
+                src = item.src;
+            } else {
+                console.error('图片参数出错')
+            }
+            if ('href' in item) {
+                href = item.href;
+            } else {
+                href = '';
+            }
+        }
         var $img = $('<img>');
         $img.attr('src', src).addClass('icarousel-img');
         var $a = $('<a></a>');
+        $a.attr('href', href);
+        $a.attr('target', '_blank');
         $a.append($img);
         var $li = $('<li></li>');
-        $li.addClass('icarousel-item').append($a);
+        $li.addClass('icarousel-item');
+        if (href) {
+            $li.append($a);
+        } else {
+            $li.append($img);
+        }
         $ul.append($li);
     }
 
     //添加箭头按钮
-    var $btn = $('<div class="icarousel-btn"></div>');
-    this.el.append($btn);
-    var $nextBtn = $('<img class="next" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABuUlEQVR4Xu3b0U3DQBCE4dlO6ICUEDqADqAS6ASoAEqACqAESoAKFp3khygiRopnd2dl+zXyxf+XS5T4coaVH7byfmwA2wwgCbj7BYBLAO9m9k0aNnwYylvA3XcAPqarHfFXZvYZfvWEJ2ABPAC4P7ieNggsgGsAL0cvSAsECsAId/dbAI/dEGgAXRGoAB0R6ADdEEIAOiGEAXRBCAXogBAOMIMwHrozsyfCF7qzh0gBUEZIA1BFSAVQREgHUEMoAVBCKANQQSgFUEAoB6hGkACoRJABqEKQAqhAkAPIRpAEyESQBchCkAb4B+HGzF7P/h08nSgPMIMwluD2awZ4NrOxFrHokJ8BJxZcfgDszOxrUT2g/f+Amfg9a/FVdgZkxI/ZIwmQFS8JkBkvB5AdLwVQES8DUBUvAVAZXw5QHV8KoBBfBqASXwKgFJ8OoBafCqAYnwagGp8CoBwfDqAeHwrQIT4MoEt8CECneDpAt3gqQMd4GoC7/7VhYty6pt29XXr7+9T5lJui7n68ZaZFPHMGHG6aahNPA5jW78a2uQHxtrptc1Hvz4xxKZ8BGRca9RwbQJRsl3F/AdeRPFD/IEa/AAAAAElFTkSuQmCC">')
-    var $prevBtn = $('<img class="prev" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACnklEQVR4XuWb4TEEQRCFuyMgAzJABicDIuAicCJABIgAESACMnAyEAIRtHpVc1VTW3d7Z3p6ptvNX7fL+677mX6zy7Tli7dcP4UEICJXRHRNRHMiOmbm79IvMhwAEXkgovNM8A0zA0bRCgVgiXiIvmTmuyL1RDFaQER2iQjf/MlA6CcRTf51CyTxb0R0OBD/xMx5KxQVgesWsBYPYm4BtBDvFoCI7BPRs1XZ573irgJEBL2Onofx5Uvl9qsMwhWAEfFTZn4scrk1F7kB0EO8Gw/oJd4FABHB/3JscvL1g00PM79blL0bExwRj90dBh3z1c0DPIjv1gJexHcBkM3yeXljqDlvVfbdPGDFOKue6DRG0cwDPIpv1gJexZsDSBPd7SDCwu99TT1fnOVpyr6JB7QaZ7UgTDwginiTFogkvjqAEfH3zDzTlqvF9dVaoOdEpwFTBUBU8VVaILJ4NYAUXn4M8jvM8jOrCEtT7suuVbWAiExSgJnf+5SZX2r/oVb30wJAgosKyJf6xNZKbPUKwA1FBGntWVQIqgpYiBYRnM5eRIRQBUCqhGXhJtoBmX6TfK+kdaoBGIGAiQ9PcbiEUBVARAjVAUSDYAIgEgQzAAkCNkrYFO1kBgVPwGbJ/NRnE1M0BZAgYLMEsTkE/MjsxHcT4YvPmAPwDqEJAM8QmgHwCqEpgAwCjHFv0KtdPKE5gAQBz//AGA8GEB6ZefoXE9N+tgsATxC6AfACoSsADxC6A+gNwQWADAKClWG6BLPE1tnkINUNgCxdahqxuQPQOmd0CaAlBLcAWkFwDSBBWJY4fyVjVOeM7gFYp0shAKyBcMTMqIiiFQbACITteW9wBQTVmyShKiDbLCFsxSM3c81bo7hfSABFzb7ioq0H8AvdWklQJKZ6cgAAAABJRU5ErkJggg==">')
-    $btn.append($prevBtn).append($nextBtn);
+    var $nextBtn = $('<img class="icarousel-btn next" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABuUlEQVR4Xu3b0U3DQBCE4dlO6ICUEDqADqAS6ASoAEqACqAESoAKFp3khygiRopnd2dl+zXyxf+XS5T4coaVH7byfmwA2wwgCbj7BYBLAO9m9k0aNnwYylvA3XcAPqarHfFXZvYZfvWEJ2ABPAC4P7ieNggsgGsAL0cvSAsECsAId/dbAI/dEGgAXRGoAB0R6ADdEEIAOiGEAXRBCAXogBAOMIMwHrozsyfCF7qzh0gBUEZIA1BFSAVQREgHUEMoAVBCKANQQSgFUEAoB6hGkACoRJABqEKQAqhAkAPIRpAEyESQBchCkAb4B+HGzF7P/h08nSgPMIMwluD2awZ4NrOxFrHokJ8BJxZcfgDszOxrUT2g/f+Amfg9a/FVdgZkxI/ZIwmQFS8JkBkvB5AdLwVQES8DUBUvAVAZXw5QHV8KoBBfBqASXwKgFJ8OoBafCqAYnwagGp8CoBwfDqAeHwrQIT4MoEt8CECneDpAt3gqQMd4GoC7/7VhYty6pt29XXr7+9T5lJui7n68ZaZFPHMGHG6aahNPA5jW78a2uQHxtrptc1Hvz4xxKZ8BGRca9RwbQJRsl3F/AdeRPFD/IEa/AAAAAElFTkSuQmCC">')
+    var $prevBtn = $('<img class="icarousel-btn prev" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAACnklEQVR4XuWb4TEEQRCFuyMgAzJABicDIuAicCJABIgAESACMnAyEAIRtHpVc1VTW3d7Z3p6ptvNX7fL+677mX6zy7Tli7dcP4UEICJXRHRNRHMiOmbm79IvMhwAEXkgovNM8A0zA0bRCgVgiXiIvmTmuyL1RDFaQER2iQjf/MlA6CcRTf51CyTxb0R0OBD/xMx5KxQVgesWsBYPYm4BtBDvFoCI7BPRs1XZ573irgJEBL2Onofx5Uvl9qsMwhWAEfFTZn4scrk1F7kB0EO8Gw/oJd4FABHB/3JscvL1g00PM79blL0bExwRj90dBh3z1c0DPIjv1gJexHcBkM3yeXljqDlvVfbdPGDFOKue6DRG0cwDPIpv1gJexZsDSBPd7SDCwu99TT1fnOVpyr6JB7QaZ7UgTDwginiTFogkvjqAEfH3zDzTlqvF9dVaoOdEpwFTBUBU8VVaILJ4NYAUXn4M8jvM8jOrCEtT7suuVbWAiExSgJnf+5SZX2r/oVb30wJAgosKyJf6xNZKbPUKwA1FBGntWVQIqgpYiBYRnM5eRIRQBUCqhGXhJtoBmX6TfK+kdaoBGIGAiQ9PcbiEUBVARAjVAUSDYAIgEgQzAAkCNkrYFO1kBgVPwGbJ/NRnE1M0BZAgYLMEsTkE/MjsxHcT4YvPmAPwDqEJAM8QmgHwCqEpgAwCjHFv0KtdPKE5gAQBz//AGA8GEB6ZefoXE9N+tgsATxC6AfACoSsADxC6A+gNwQWADAKClWG6BLPE1tnkINUNgCxdahqxuQPQOmd0CaAlBLcAWkFwDSBBWJY4fyVjVOeM7gFYp0shAKyBcMTMqIiiFQbACITteW9wBQTVmyShKiDbLCFsxSM3c81bo7hfSABFzb7ioq0H8AvdWklQJKZ6cgAAAABJRU5ErkJggg==">')
+    this.el.append($nextBtn).append($prevBtn);
 
     //监听按钮事件
     $nextBtn.click(function () {
