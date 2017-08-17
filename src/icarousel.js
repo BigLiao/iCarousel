@@ -27,14 +27,7 @@ Icarousel.prototype.init = function (option) {
         hoverStop: true,
         duration: 2000,
         speed: 600,
-        images: [
-            'https://static.bootcss.com/www/assets/img/gulpjs.png?1502824502911',
-            {
-                src: 'https://static.bootcss.com/www/assets/img/webpack.png?1502824502911',
-                href: 'https://webpack.github.io/'
-            },
-            'https://static.bootcss.com/www/assets/img/lesscss.png?1502824502911'
-        ]
+        images: []
     };
     this.options = $.extend({}, DEFAULT, option);
 
